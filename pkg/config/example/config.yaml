@@ -1,0 +1,49 @@
+policy: enabled
+alwaysInjectSelector:
+  []
+neverInjectSelector:
+  []
+injectedAnnotations:
+
+template: |-
+  initContainers:
+  - name: istio-init
+    image: "docker.io/istio/proxyv2:1.6.5"
+    args:
+    - istio-iptables
+    - "-p"
+    - 15001
+    - "-z"
+    - "15006"
+    - "-u"
+    - 1337
+  {{- if .Values.global.proxy_init.resources }}
+    resources:
+      {{ toYaml .Values.global.proxy_init.resources | indent 4 }}
+  {{- else }}
+    resources: {}
+  {{- end }}
+    securityContext:
+      allowPrivilegeEscalation: {{ .Values.global.proxy.privileged }}
+      privileged: {{ .Values.global.proxy.privileged }}
+      capabilities:
+      add:
+        - NET_ADMIN
+        - NET_RAW
+      readOnlyRootFilesystem: false
+      runAsGroup: 0
+      runAsNonRoot: false
+      runAsUser: 0
+    restartPolicy: Always
+  containers:
+  - name: istio-proxy
+    image: "docker.io/istio/proxyv2:1.6.5"
+    ports:
+      - containerPort: 15090
+        protocol: TCP
+        name: http-envoy-prom
+    
+  imagePullSecrets:
+    {{- range .Values.global.imagePullSecrets }}
+    - name: {{ . }}
+    {{- end }}

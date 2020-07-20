@@ -1,0 +1,25 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: sidecar-injector-webhook-cfg
+  labels:
+    app: {{ template "sidecar-inject-server.name" . }}
+    chart: {{ template "sidecar-inject-server.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+webhooks:
+  - name: sidecar-injector.yisaer.github.io
+    clientConfig:
+      service:
+        name: sidecar-injector-webhook-svc
+        namespace: {{ .Release.Namespace }}
+        path: "/mutate"
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUN5RENDQWJDZ0F3SUJBZ0lCQURBTkJna3Foa2lHOXcwQkFRc0ZBREFWTVJNd0VRWURWUVFERXdwcmRXSmwKY201bGRHVnpNQjRYRFRJd01EY3lNREE1TVRVd09Wb1hEVE13TURjeE9EQTVNVFV3T1Zvd0ZURVRNQkVHQTFVRQpBeE1LYTNWaVpYSnVaWFJsY3pDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVBBRENDQVFvQ2dnRUJBTVlHCjkvb2p2YnBoWHRvdEkzSzZZRlp2M3pqVExJWk0wc3FTTlJ6eDl5VklsNEYwMDlvbnBlZ25MYW4wVEpVckEzdVMKKzZ2MStyMTIwdzdOTHdKUk9laW4zVDVwOEU0NU1SdUNoVytpdnpNNlk2KzRPNlBGYU9SbzdCR3JVOGVOU1d5bwordEE0RUJQSW5YQjIxT2JYY092WDBzRDZ5M0dPQXQwYTdQVUVRUzlQd0l0bDhrNTJ4bUlMZVlpRVYxeHh4RU5ICmR6WUhLVE1LbStlaE5NMkFqa1hHYnNmaXNnS3B4dTMyVFR0VlEyYk5rbTFSS0NKdUZwaGJ5eUdvT09idzNLL0IKZldEaWZzemZYZWg1Qkl1cTFQazZBZ3BBYUVNZlpROXNpT1VlQ1RSaHpBVmo4M0Z1d0pDYmhReHg1ZFJLWStWLwpUVmxPak1xVWFEZG92bXVNOTlVQ0F3RUFBYU1qTUNFd0RnWURWUjBQQVFIL0JBUURBZ0trTUE4R0ExVWRFd0VCCi93UUZNQU1CQWY4d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJTWdaaHp0NHd5TWoyY2J0UjBHdzg3MWtFdTkKSGZjV1dTanF3ZjZlcTNYT1ZJeU9ZeStqT2FjU1UxY1Z6Uys1N29RNXVhYm12WWhJN1AwTzNRekdoaTBWL01KOApXb0NaODNPdVVqOE1SNmJzL00rdFROOTNLbWppRVgwUzZFSUoxWjdmK1ZpaFprNFVZVk1zY0ZBVVdscXNPc1R4Cjl3bzFudVY2L3ZNSjRCVnl5WnAzOVVMVnB5VnQzc2hzNXJPWGcvcjllUFd5VDc0d3ZrM0s0eUVYcVp0M1FJRWoKSlB3MUduT21UcnRwa1JncjQ1bzFPNHlNUjVqYnVSeUFKM3MyS2JLdzY5VnloeW45SHV4b01sR0xvQjZhbFFPYQpOSW1xeWZGYVU2cnhudWNvdEh5K282SHdOMytGa1YwUnNLMGpmeko1MDM0eDJ2ekFQRklGdE56OHZQQT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+    rules:
+      - operations: [ "CREATE" ]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    namespaceSelector:
+      matchLabels:
+        sidecar-injector: enabled
