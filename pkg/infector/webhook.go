@@ -124,6 +124,15 @@ func inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionResponse {
 		}
 	}
 
+	var grp = int64(1337)
+	if pod.Spec.SecurityContext == nil {
+		pod.Spec.SecurityContext = &corev1.PodSecurityContext{
+			FSGroup: &grp,
+		}
+	} else {
+		pod.Spec.SecurityContext.FSGroup = &grp
+	}
+
 	deployMeta := pod.ObjectMeta.DeepCopy()
 	deployMeta.Namespace = req.Namespace
 
