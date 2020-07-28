@@ -22,6 +22,7 @@ In addition, the `MutatingAdmissionWebhook` admission controllers should be adde
 `webhook-injector` is managed by `go mod`
 
 run `build.sh` to build docker image
+run `./envoy/build.sh` to build envoy image
 
 ## How to Install
 
