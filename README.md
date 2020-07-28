@@ -22,7 +22,8 @@ In addition, the `MutatingAdmissionWebhook` admission controllers should be adde
 `webhook-injector` is managed by `go mod`
 
 run `build.sh` to build docker image
-run `./envoy/build.sh` to build envoy image
+`cd envoy`
+run `bash build.sh` to build envoy image
 
 ## How to Install
 
@@ -50,9 +51,11 @@ And Here is the result
 ```
 $ kubectl get pod
 NAME                                                    READY   STATUS        RESTARTS   AGE
-sleep-578649fc85-xcg2r                                  2/2     Running       0          20s
+myapp-8484956db4-xvknp                                 2/2     Running       0          20s
 ```
-
+Then
+`kubectl port-forward --address 0.0.0.0 pod/myapp-8484956db4-xvknp 8877:15006`
+Open 127.0.0.1:8877 in broswer refresh the web page, and there will be a 1 second delay.
 ## Sidecar
 
 `Sidecar` is defined by `config` in ./pkg/config/example/config.yaml`.
